@@ -54,7 +54,7 @@ export const withR2Request= makeDecorator({
     });
 
     polly.server.any().on("response", req => {
-      channel.emit("r2request/new-request", {
+      channel.emit("r2Request/new-request", {
         url: req.url,
         pathname: req.pathname,
         query: req.query,
@@ -62,7 +62,7 @@ export const withR2Request= makeDecorator({
       });
     });
 
-    channel.on("r2request/save-requests", async () => {
+    channel.on("r2Request/save-requests", async () => {
       await polly.stop();
     });
 
