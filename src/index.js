@@ -4,6 +4,11 @@ import addons, { makeDecorator } from "@storybook/addons";
 import { Polly } from "@pollyjs/core";
 import FetchAdapter from "@pollyjs/adapter-fetch";
 import RESTPersister from "@pollyjs/persister-rest";
+import {
+  STORY_CHANGED,
+  FORCE_RE_RENDER,
+  REGISTER_SUBSCRIPTION
+} from "@storybook/core-events";
 
 let polly = null;
 
@@ -42,12 +47,19 @@ const defaultConfig = {
   matchRequestsBy: undefined
 };
 
-export const withR2Request= makeDecorator({
+let store = {
+  polly: polly,
+  config: null
+};
+
+export const withR2Request = makeDecorator({
   name: "withR2Request",
   parameterName: "r2Request",
   wrapper: (getStory, context, { parameters = {} }) => {
     const channel = addons.getChannel();
-    let r2Request = parameters.re2Request || defaultConfig;
+    let r2Request = store.config || parameters.re2Request || defaultConfig;
+    console.info("wrapper run...");
+
     const polly = setupPolly({
       recordName: `${context.kind}/${context.name}`,
       recordingMode: r2Request.recordingMode
@@ -62,10 +74,40 @@ export const withR2Request= makeDecorator({
       });
     });
 
-    channel.on("r2Request/save-requests", async () => {
-      await polly.stop();
-    });
+    channel.emit(REGISTER_SUBSCRIPTION, registerR2Request);
+    channel.emit("r2Request/config-change", r2Request);
 
     return getStory(context);
   }
 });
+
+function registerR2Request() {
+  const channel = addons.getChannel();
+  channel.on("r2Request/save-requests", onSaveRecord);
+  channel.on(STORY_CHANGED, resetStore);
+  channel.on("r2Request/refresh", refresh);
+  return disconnectR2Request;
+}
+
+function disconnectR2Request() {
+  const channel = addons.getChannel();
+  store.config = null;
+  channel.removeListener("r2Request/save-requests", onSaveRecord);
+  channel.removeListener(STORY_CHANGED, resetStore);
+  channel.removeListener("r2Request/refresh", refresh);
+}
+
+function resetStore() {
+  store.config = null;
+}
+
+async function onSaveRecord() {
+  await store.polly.stop();
+}
+
+async function refresh(r2Request) {
+  const channel = addons.getChannel();
+  console.info("forceRequest");
+  store.config = r2Request;
+  channel.emit(FORCE_RE_RENDER);
+}

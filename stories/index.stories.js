@@ -1,17 +1,14 @@
 import React from "react";
 
 import { storiesOf } from "@storybook/react";
-import { action } from "@storybook/addon-actions";
 import { linkTo } from "@storybook/addon-links";
+import { text } from '@storybook/addon-knobs';
 
-import { Button, Welcome } from "@storybook/react/demo";
 
-storiesOf("Welcome", module).add("to Storybook", () => (
-  <Welcome showApp={linkTo("Button")} />
-));
 
 storiesOf("R2Request", module).add("Demo app with fetch", () => {
-  return <DemoApp />
+  const txt = text('abc', 'Hello');
+  return <DemoApp title={txt} />
 });
 
 class DemoApp extends React.Component {
@@ -40,7 +37,7 @@ class DemoApp extends React.Component {
     const { todos } = this.state;
     return (
       <div>
-        <h2>Todo list</h2>
+        <h2>{this.props.title}</h2>
         <ol>
           {todos.map(i => (
             <li key={i.id}>{i.title}</li>
