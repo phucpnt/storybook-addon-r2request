@@ -58,7 +58,6 @@ export const withR2Request = makeDecorator({
   wrapper: (getStory, context, { parameters = {} }) => {
     const channel = addons.getChannel();
     let r2Request = store.config || parameters.re2Request || defaultConfig;
-    console.info("wrapper run...");
 
     const polly = setupPolly({
       recordName: `${context.kind}/${context.name}`,
@@ -77,7 +76,7 @@ export const withR2Request = makeDecorator({
     channel.emit(REGISTER_SUBSCRIPTION, registerR2Request);
     channel.emit("r2Request/config-change", r2Request);
 
-    return getStory(context);
+    return React.cloneElement(getStory(context), {key: `r2Request-${r2Request.recordingMode}` });
   }
 });
 
