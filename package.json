@@ -2,17 +2,19 @@
   "name": "storybook-addon-r2request",
   "version": "1.0.0",
   "description": "Storybook addon record request addon for storybook",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "peerDependencies": {
     "@storybook/core": "^5.1.4",
     "@storybook/addons": "^5.1.4",
     "@storybook/components": "^5.1.4",
+    "@storybook/react": "^5.1.4",
     "@storybook/theming": "^5.1.4"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "start-storybook -p 6767",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "build": "babel src -d lib"
   },
   "repository": {
     "type": "git",
@@ -34,15 +36,19 @@
     "@pollyjs/persister-rest": "^2.1.0",
     "@storybook/components": "^5.1.4",
     "@storybook/core": "^5.1.4",
+    "@storybook/react": "^5.1.7",
     "@storybook/theming": "^5.1.4"
   },
   "devDependencies": {
+    "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-react": "^7.0.0",
     "@storybook/addon-actions": "^5.1.4",
     "@storybook/addon-knobs": "^5.1.4",
     "@storybook/addon-links": "^5.1.4",
     "@storybook/addons": "^5.1.4",
-    "@storybook/react": "^5.1.4",
     "babel-loader": "^8.0.6"
   }
 }

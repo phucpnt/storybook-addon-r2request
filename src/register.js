@@ -98,7 +98,7 @@ class R2RequestPanel extends React.Component {
   };
 
   recordRequest = () => {
-    this.props.channel.emit("r2Request/save-requests");
+    this.props.channel.emit("r2Request/persist-records");
   };
 
   onChangeRecordingMode = (mode) => {

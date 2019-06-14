@@ -27,7 +27,13 @@ function getPollyInstance(recordName, recordingMode) {
   });
 }
 
+let store = {
+  polly: polly,
+  config: null
+};
 function setupPolly({ recordName, recordingMode, matchRequestsBy }) {
+  let polly = store.polly;
+
   if (!polly) {
     Polly.register(FetchAdapter);
     Polly.register(RESTPersister);
@@ -39,6 +45,7 @@ function setupPolly({ recordName, recordingMode, matchRequestsBy }) {
   polly.configure({
     matchRequestsBy
   });
+  store.polly = polly;
   return polly;
 }
 
@@ -47,10 +54,6 @@ const defaultConfig = {
   matchRequestsBy: undefined
 };
 
-let store = {
-  polly: polly,
-  config: null
-};
 
 export const withR2Request = makeDecorator({
   name: "withR2Request",
@@ -63,6 +66,7 @@ export const withR2Request = makeDecorator({
       recordName: `${context.kind}/${context.name}`,
       recordingMode: r2Request.recordingMode
     });
+    
 
     polly.server.any().on("response", req => {
       channel.emit("r2Request/new-request", {
@@ -82,7 +86,7 @@ export const withR2Request = makeDecorator({
 
 function registerR2Request() {
   const channel = addons.getChannel();
-  channel.on("r2Request/save-requests", onSaveRecord);
+  channel.on("r2Request/persist-records", onSaveRecord);
   channel.on(STORY_CHANGED, resetStore);
   channel.on("r2Request/refresh", refresh);
   return disconnectR2Request;
@@ -91,7 +95,7 @@ function registerR2Request() {
 function disconnectR2Request() {
   const channel = addons.getChannel();
   store.config = null;
-  channel.removeListener("r2Request/save-requests", onSaveRecord);
+  channel.removeListener("r2Request/persist-records", onSaveRecord);
   channel.removeListener(STORY_CHANGED, resetStore);
   channel.removeListener("r2Request/refresh", refresh);
 }
