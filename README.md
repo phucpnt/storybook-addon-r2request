@@ -1,4 +1,4 @@
-![demo](./static/demo.gif "Record and replay request in storybook")
+<img src="./static/demo.gif" width="500">
 
 
 ## How to use with storybook
