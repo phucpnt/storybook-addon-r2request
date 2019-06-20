@@ -61,10 +61,12 @@ export const withR2Request = makeDecorator({
   wrapper: (getStory, context, { parameters = {} }) => {
     const channel = addons.getChannel();
     let r2Request = store.config || parameters.re2Request || defaultConfig;
+    let matchRequestsBy = (parameters.r2Request || {}).matchRequestsBy;
 
     const polly = setupPolly({
       recordName: `${context.kind}/${context.name}`,
-      recordingMode: r2Request.recordingMode
+      recordingMode: r2Request.recordingMode,
+      matchRequestsBy,
     });
     
 
