@@ -1,6 +1,6 @@
 {
   "name": "storybook-addon-r2request",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Storybook addon record request addon for storybook",
   "main": "lib/index.js",
   "peerDependencies": {
