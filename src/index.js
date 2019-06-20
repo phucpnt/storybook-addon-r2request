@@ -51,7 +51,6 @@ function setupPolly({ recordName, recordingMode, matchRequestsBy }) {
 
 const defaultConfig = {
   recordingMode: "replay",
-  matchRequestsBy: undefined
 };
 
 
@@ -60,9 +59,11 @@ export const withR2Request = makeDecorator({
   parameterName: "r2Request",
   wrapper: (getStory, context, { parameters = {} }) => {
     const channel = addons.getChannel();
-    let r2Request = store.config || parameters.re2Request || defaultConfig;
-    let matchRequestsBy = (parameters.r2Request || {}).matchRequestsBy;
+    let r2Request = store.config || parameters || defaultConfig;
+    let matchRequestsBy = (parameters || {}).matchRequestsBy;
 
+    console.info(parameters);
+    console.info('matchRequestsBy', matchRequestsBy);
     const polly = setupPolly({
       recordName: `${context.kind}/${context.name}`,
       recordingMode: r2Request.recordingMode,
