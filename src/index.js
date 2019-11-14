@@ -1,14 +1,9 @@
-import React from "react";
-import { storiesOf } from "@storybook/react";
-import addons, { makeDecorator } from "@storybook/addons";
-import { Polly } from "@pollyjs/core";
 import FetchAdapter from "@pollyjs/adapter-fetch";
+import { Polly } from "@pollyjs/core";
 import RESTPersister from "@pollyjs/persister-rest";
-import {
-  STORY_CHANGED,
-  FORCE_RE_RENDER,
-  REGISTER_SUBSCRIPTION
-} from "@storybook/core-events";
+import addons, { makeDecorator } from "@storybook/addons";
+import { FORCE_RE_RENDER, REGISTER_SUBSCRIPTION, STORY_CHANGED } from "@storybook/core-events";
+import React from "react";
 
 let polly = null;
 
@@ -50,9 +45,8 @@ function setupPolly({ recordName, recordingMode, matchRequestsBy }) {
 }
 
 const defaultConfig = {
-  recordingMode: "replay",
+  recordingMode: "replay"
 };
-
 
 export const withR2Request = makeDecorator({
   name: "withR2Request",
@@ -63,13 +57,12 @@ export const withR2Request = makeDecorator({
     let matchRequestsBy = (parameters || {}).matchRequestsBy;
 
     console.info(parameters);
-    console.info('matchRequestsBy', matchRequestsBy);
+    console.info("matchRequestsBy", matchRequestsBy);
     const polly = setupPolly({
       recordName: `${context.kind}/${context.name}`,
       recordingMode: r2Request.recordingMode,
-      matchRequestsBy,
+      matchRequestsBy
     });
-    
 
     polly.server.any().on("response", req => {
       channel.emit("r2Request/new-request", {
@@ -83,7 +76,9 @@ export const withR2Request = makeDecorator({
     channel.emit(REGISTER_SUBSCRIPTION, registerR2Request);
     channel.emit("r2Request/config-change", r2Request);
 
-    return React.cloneElement(getStory(context), {key: `r2Request-${r2Request.recordingMode}` });
+    return React.cloneElement(getStory(context), {
+      key: `r2Request-${r2Request.recordingMode}`
+    });
   }
 });
 
@@ -116,4 +111,11 @@ async function refresh(r2Request) {
   console.info("forceRequest");
   store.config = r2Request;
   channel.emit(FORCE_RE_RENDER);
+}
+
+/**
+ * @returns {Polly}
+ */
+export function getPolly() {
+  return store.polly;
 }
